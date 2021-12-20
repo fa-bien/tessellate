@@ -1,0 +1,63 @@
+#sketchArea {
+    border: 2px dashed #bbb;
+    
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 25px;
+    width: 640px;
+    height: 480px;
+    align: center;
+    text-align: center;
+    /* font: 20pt bold 'Courier'; */
+    font-size: 20pt;
+    font-family: "Courier";
+    font-style: bold;
+    color: #bbb;
+    
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  /* position: absolute; */
+  /* top: 50%; */
+  /* left: 50%; */
+  /* transform: translateX(-50%) translateY(-50%); */
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    align: center;
+
+}
+
+#stack {
+    justify-content:center;
+    align-items:center;  
+    text-align: center;
+    width: 100%;
+}
+
+h1 {
+    font-size: 30pt;
+    font-family: "Courier";
+    font-style: italic;
+    background-image: linear-gradient(to right, red, orange , yellow, green, blue, indigo, violet);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+#instructions {
+    margin-right: auto;
+    margin-left: auto;
+    width: 640px;
+}
+
+.instruction {
+    text-align: left;
+    font-size: 20pt;
+    font-family: "Arial";
+    transition: color .5s;
+    color: #cccccc;
+}
