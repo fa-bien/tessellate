@@ -276,6 +276,7 @@ function updateCoords(event){
 }
 
 function startPainting(event){
+    if (event.button != 0) return; // we only care about left button
     paint = true;
     updateCoords(event);
     if (currentStep == 1 && inBox(coord)) {
