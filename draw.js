@@ -65,6 +65,9 @@ function init() {
         // DEBUG
         //create final thingy
         tessellate();
+        document.removeEventListener('mousedown', startPainting);
+        document.removeEventListener('mouseup', stopPainting);
+        document.removeEventListener('mousemove', sketch);
     }
 }
 
@@ -79,10 +82,10 @@ function tessellate() {
     let ystep = (box.h)/(reduction);
     let x=0, y=0;
     let colours = [ 'red', 'orange' , 'yellow', 'green', 'blue', 'indigo', 'violet'];
-    // colours = [ 'black', 'white', 'grey'];
     let col = 0;
-    for(i=-5; i < 10; i++) {
-        for(j=-1; j < 10; j++) {
+    for(i=-9; i < 20; i++) {
+        for(j=-5; j < 15; j++) {
+            
             ctx.save();
             ctx.translate(box.w/reduction*i + xstep*j, ystep*j);
             ctx.stroke(p);
