@@ -78,6 +78,11 @@ function init() {
         document.removeEventListener('mousedown', startPainting);
         document.removeEventListener('mouseup', stopPainting);
         document.removeEventListener('mousemove', sketch);
+        // make the image draggable
+        document.getElementById('sketchArea').innerHTML =
+        ['<img id="output" class="droppedImage" src="',
+         canvas.toDataURL(),
+         '" title="tessellated"/>'].join('');
     }
 }
 
