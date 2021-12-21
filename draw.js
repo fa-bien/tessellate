@@ -100,6 +100,21 @@ function init() {
     }
 }
 
+function genRandomColours(procedure) {
+    let colours = [];
+    if (procedure == 'random') {
+        ncol = 3 + Math.floor(Math.random() * 4);
+        for (k=0; k <ncol ; k++) {
+            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
+        }
+    } else if (procedure == 'smart-random') {
+        colours = genSmartColours(2 + Math.floor(Math.random() * 6));
+    } else if (procedure == 'random-shades') {
+        colours = genShades(2 + Math.floor(Math.random() * 6));
+    }
+    return colours;
+}
+
 function tessellate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let reduction = 4;
@@ -114,11 +129,7 @@ function tessellate() {
     let selectBtn = document.querySelector('#select-palette');
     colours = palettes[selectBtn.value];
     if (colours === undefined) {
-        colours = [];
-        ncol = 3 + Math.floor(Math.random() * 4);
-        for (k=0; k <ncol ; k++) {
-            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
-        }
+        colours = genRandomColours(selectBtn.value);
     }
     let col = 0;
     for(i=-9; i < 20; i++) {
