@@ -139,7 +139,7 @@ function resetCanvas() {
     ctx.fillStyle = 'white';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+//    ctx.strokeRect(0, 0, canvas.width, canvas.height);
     if (currentStep == 1) {
         ctx.fillStyle = boxFill;
         ctx.strokeStyle = boxStroke;
