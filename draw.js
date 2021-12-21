@@ -29,6 +29,13 @@ let coord = {x:0 , y:0};
 // current step in the process
 let currentStep = 1;
 
+// colour palettes
+const palettes = {'rainbow': [ 'red', 'orange' , 'yellow', 'green', 'blue', 'indigo', 'violet'],
+                  'yellow-grey': ['#555555', '#888888', '#ffffaa' ],
+                  'flame': ['red', 'orange', 'gold'],
+                  'random': undefined
+                 }
+
 function inBox(coords) {
     return coords.x >= box.x && coords.x <= box.x + box.w &&
         coords.y >= box.y && coords.y <= box.y + box.h;
@@ -61,10 +68,11 @@ function init() {
         ctx.strokeStyle = boxStroke;
         ctx.fill(hPath);
         ctx.stroke(hPath);
-
-        // DEBUG
         //create final thingy
         tessellate();
+        document.querySelector('#select-palette').addEventListener( 'click',
+                                                                    () =>
+            tessellate() );
         document.removeEventListener('mousedown', startPainting);
         document.removeEventListener('mouseup', stopPainting);
         document.removeEventListener('mousemove', sketch);
@@ -81,11 +89,19 @@ function tessellate() {
     let xstep = (-xgap)/(reduction);
     let ystep = (box.h)/(reduction);
     let x=0, y=0;
-    let colours = [ 'red', 'orange' , 'yellow', 'green', 'blue', 'indigo', 'violet'];
+    let colours = [];
+    let selectBtn = document.querySelector('#select-palette');
+    colours = palettes[selectBtn.value];
+    if (colours === undefined) {
+        colours = [];
+        ncol = 2 + Math.floor(Math.random() * 4);
+        for (k=0; k <ncol ; k++) {
+            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
+        }
+    }
     let col = 0;
     for(i=-9; i < 20; i++) {
         for(j=-5; j < 15; j++) {
-            
             ctx.save();
             ctx.translate(box.w/reduction*i + xstep*j, ystep*j);
             ctx.stroke(p);
@@ -147,7 +163,7 @@ function transToStep2() {
     vPath.addPath(p1, m1);
     vPath.addPath(p2, m2);
     // now we animate the transition
-    let td = 1; // transition duration in seconds
+    let td = .8; // transition duration in seconds
     let nframes = 60; // number of transition frames
     let offsets = [];
     var frames = 0;
@@ -219,7 +235,7 @@ function transToStep3() {
     hPath.addPath(bPath, mb);
     hPath.addPath(tPath, mt);
     // now we animate the transition
-    let td = 1; // transition duration in seconds
+    let td = .8; // transition duration in seconds
     let nframes = 60; // number of transition frames
     let xoffsets=[], yoffsets=[];
     var frames = 0;
