@@ -5,6 +5,8 @@ window.addEventListener('load', ()=>{
     document.addEventListener('mousedown', startPainting);
     document.addEventListener('mouseup', stopPainting);
     document.addEventListener('mousemove', sketch);
+    document.querySelector('#resetBtn').
+        addEventListener('click', (evt) => location.reload());
 });
 
 const canvas = document.querySelector('#sketchCanvas');
