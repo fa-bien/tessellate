@@ -1,12 +1,9 @@
 // with help from https://www.geeksforgeeks.org/how-to-draw-with-mouse-in-html-5-canvas/ and https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 
 window.addEventListener('load', ()=>{
-    init();
-    document.addEventListener('mousedown', startPainting);
-    document.addEventListener('mouseup', stopPainting);
-    document.addEventListener('mousemove', sketch);
+    resetAll();
     document.querySelector('#resetBtn').
-        addEventListener('click', (evt) => location.reload());
+        addEventListener('click', (evt) => resetAll());
 });
 
 const canvas = document.querySelector('#sketchCanvas');
@@ -43,18 +40,35 @@ function inBox(coords) {
         coords.y >= box.y && coords.y <= box.y + box.h;
 }
 
+function resetAll() {
+    console.log('reset');
+    if (currentStep > 2) {
+        let outputImg = document.querySelector('#output');
+        document.getElementById('sketchArea').removeChild(outputImg);
+        document.getElementById('sketchArea').appendChild(canvas);
+    }
+    document.addEventListener('mousedown', startPainting);
+    document.addEventListener('mouseup', stopPainting);
+    document.addEventListener('mousemove', sketch);
+    currentStep = 1;
+    init();
+}
+
 function init() {
     resetCanvas();
     // reset instructions
     let instr1 = document.querySelector('#instr1');
     let instr2 = document.querySelector('#instr2');
+    let instr3 = document.querySelector('#instr3');
     if (currentStep == 1) {
         vPoints = [];
+        hPoints = [];
         vPointEqs = [];
         vPath = [];
         hPath = [];
         instr1.style.color = 'blue';
         instr2.style.color = '#cccccc';
+        instr3.style.color = '#cccccc';
     } else if (currentStep == 2) {
         hPath = [];
         instr2.style.color = 'blue';
@@ -96,7 +110,7 @@ function tessellate() {
     colours = palettes[selectBtn.value];
     if (colours === undefined) {
         colours = [];
-        ncol = 2 + Math.floor(Math.random() * 4);
+        ncol = 3 + Math.floor(Math.random() * 4);
         for (k=0; k <ncol ; k++) {
             colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
         }
