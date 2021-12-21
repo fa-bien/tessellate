@@ -110,7 +110,7 @@ function genRandomColours(procedure) {
     } else if (procedure == 'smart-random') {
         colours = genSmartColours(2 + Math.floor(Math.random() * 6));
     } else if (procedure == 'random-shades') {
-        colours = genShades(2 + Math.floor(Math.random() * 6));
+        colours = genShades(3 + Math.floor(Math.random() * 6));
     }
     return colours;
 }

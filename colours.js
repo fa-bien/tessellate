@@ -49,7 +49,10 @@ function genShades(n) {
     let V = 0.9 + 0.1 * Math.random();
     let step = S / n;
     for (i=0; i < n; i++) {
-        let c = new HSVColour(H, S - i * step, V);
+        // we add a bit of noise on the hue
+        let c = new HSVColour( (H * (0.85 + 0.3 * Math.random())) % 1,
+                              S - i * step,
+                              V);
         colours.push(c.RGB());
     }
     return colours;
