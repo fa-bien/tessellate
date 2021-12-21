@@ -20,8 +20,13 @@ function touchHandler(event) {
 }
 
 window.addEventListener('load', ()=>{
-    canvas.addEventListener("touchstart", touchHandler, true);
-    canvas.addEventListener("touchmove", touchHandler, true);
-    canvas.addEventListener("touchend", touchHandler, true);
-    canvas.addEventListener("touchcancel", touchHandler, true);    
+    addTouchListeners()
 });
+
+function addTouchListeners() {
+    let doc = canvas;
+    doc.addEventListener("touchstart", touchHandler, true);
+    doc.addEventListener("touchmove", touchHandler, true);
+    doc.addEventListener("touchend", touchHandler, true);
+    doc.addEventListener("touchcancel", touchHandler, true);    
+}

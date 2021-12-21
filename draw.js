@@ -49,8 +49,11 @@ function resetAll() {
     document.addEventListener('mousedown', startPainting);
     document.addEventListener('mouseup', stopPainting);
     document.addEventListener('mousemove', sketch);
-    document.querySelector('#select-palette').removeEventListener( 'click',
+    document.querySelector('#select-palette').removeEventListener( 'change',
                                                                    tessellate);
+    document.querySelector('#randomBtn').removeEventListener( 'click',
+                                                              tessellate);
+    addTouchListeners();
     currentStep = 1;
     init();
 }
@@ -87,8 +90,10 @@ function init() {
         ctx.stroke(hPath);
         //create final thingy
         tessellate();
-        document.querySelector('#select-palette').addEventListener( 'click',
+        document.querySelector('#select-palette').addEventListener( 'change',
                                                                     tessellate);
+        document.querySelector('#randomBtn').addEventListener( 'click',
+                                                               tessellate);
         document.removeEventListener('mousedown', startPainting);
         document.removeEventListener('mouseup', stopPainting);
         document.removeEventListener('mousemove', sketch);
