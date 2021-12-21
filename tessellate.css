@@ -55,9 +55,16 @@ h1 {
 }
 
 .instruction {
+    font-family: "Arial";
     text-align: left;
     font-size: 20pt;
-    font-family: "Arial";
     transition: color .5s;
     color: #cccccc;
+}
+
+.notice {
+    font-family: "Arial";
+    text-align: center;
+    font-size: 12pt;
+    color: #555555;
 }
