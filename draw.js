@@ -41,7 +41,6 @@ function inBox(coords) {
 }
 
 function resetAll() {
-    console.log('reset');
     if (currentStep > 2) {
         let outputImg = document.querySelector('#output');
         document.getElementById('sketchArea').removeChild(outputImg);
@@ -50,6 +49,8 @@ function resetAll() {
     document.addEventListener('mousedown', startPainting);
     document.addEventListener('mouseup', stopPainting);
     document.addEventListener('mousemove', sketch);
+    document.querySelector('#select-palette').removeEventListener( 'click',
+                                                                   tessellate);
     currentStep = 1;
     init();
 }
@@ -87,8 +88,7 @@ function init() {
         //create final thingy
         tessellate();
         document.querySelector('#select-palette').addEventListener( 'click',
-                                                                    () =>
-            tessellate() );
+                                                                    tessellate);
         document.removeEventListener('mousedown', startPainting);
         document.removeEventListener('mouseup', stopPainting);
         document.removeEventListener('mousemove', sketch);
