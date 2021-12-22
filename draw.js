@@ -35,6 +35,33 @@ const palettes = {'rainbow': [ 'red', 'orange' , 'yellow', 'green', 'blue', 'ind
                   'random': undefined
                  }
 
+let colours = [];
+
+function genRandomColours(procedure) {
+    let colours = [];
+    if (procedure == 'random') {
+        ncol = 3 + Math.floor(Math.random() * 4);
+        for (k=0; k <ncol ; k++) {
+            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
+        }
+    } else if (procedure == 'smart-random') {
+        colours = genSmartColours(2 + Math.floor(Math.random() * 6));
+    } else if (procedure == 'random-shades') {
+        colours = genShades(3 + Math.floor(Math.random() * 6));
+    }
+    return colours;
+}
+
+function updateColours() {
+    colours = [];
+    let selectBtn = document.querySelector('#select-palette');
+    colours = palettes[selectBtn.value];
+    if (colours === undefined) {
+        colours = genRandomColours(selectBtn.value);
+    }
+    tessellateToMain();
+}
+
 function inBox(coords) {
     return coords.x >= box.x && coords.x <= box.x + box.w &&
         coords.y >= box.y && coords.y <= box.y + box.h;
@@ -49,10 +76,11 @@ function resetAll() {
     document.addEventListener('mousedown', startPainting);
     document.addEventListener('mouseup', stopPainting);
     document.addEventListener('mousemove', sketch);
-    document.querySelector('#select-palette').removeEventListener( 'change',
-                                                                   tessellate);
-    document.querySelector('#randomBtn').removeEventListener( 'click',
-                                                              tessellate);
+    document.querySelector('#select-palette').removeEventListener(
+        'change', updateColours);
+    document.querySelector('#randomBtn').removeEventListener(
+        'click', updateColours);
+    document.querySelector('#save').addEventListener('click', tessellateToSave);
     addTouchListeners();
     currentStep = 1;
     init();
@@ -73,6 +101,7 @@ function init() {
         instr1.style.color = 'blue';
         instr2.style.color = '#cccccc';
         instr3.style.color = '#cccccc';
+        document.querySelector('#save').disabled = true;
     } else if (currentStep == 2) {
         hPath = [];
         instr2.style.color = 'blue';
@@ -82,72 +111,81 @@ function init() {
         ctx.strokeStyle = boxStroke;
         ctx.fill(vPath);
         ctx.stroke(vPath);
+        
     } else if (currentStep == 3) {
-        // draw current shape here
-        ctx.fillStyle = boxFill;
-        ctx.strokeStyle = boxStroke;
-        ctx.fill(hPath);
-        ctx.stroke(hPath);
         //create final thingy
-        tessellate();
-        document.querySelector('#select-palette').addEventListener( 'change',
-                                                                    tessellate);
-        document.querySelector('#randomBtn').addEventListener( 'click',
-                                                               tessellate);
+        updateColours();
+        document.querySelector('#select-palette').addEventListener(
+            'change', updateColours);
+        document.querySelector('#randomBtn').addEventListener(
+            'click', updateColours);
         document.removeEventListener('mousedown', startPainting);
         document.removeEventListener('mouseup', stopPainting);
         document.removeEventListener('mousemove', sketch);
+        document.querySelector('#save').disabled = false;
     }
 }
 
-function genRandomColours(procedure) {
-    let colours = [];
-    if (procedure == 'random') {
-        ncol = 3 + Math.floor(Math.random() * 4);
-        for (k=0; k <ncol ; k++) {
-            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
-        }
-    } else if (procedure == 'smart-random') {
-        colours = genSmartColours(2 + Math.floor(Math.random() * 6));
-    } else if (procedure == 'random-shades') {
-        colours = genShades(3 + Math.floor(Math.random() * 6));
-    }
-    return colours;
-}
-
-function tessellate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let reduction = 4;
-    let p = new Path2D();
-    let m = new DOMMatrix();
-    m.scaleSelf(1/reduction, 1/reduction);
-    p.addPath(hPath, m);
-    let xstep = (-xgap)/(reduction);
-    let ystep = (box.h)/(reduction);
-    let x=0, y=0;
-    let colours = [];
-    let selectBtn = document.querySelector('#select-palette');
-    colours = palettes[selectBtn.value];
-    if (colours === undefined) {
-        colours = genRandomColours(selectBtn.value);
-    }
-    let col = 0;
-    for(i=-9; i < 20; i++) {
-        for(j=-5; j < 15; j++) {
-            ctx.save();
-            ctx.translate(box.w/reduction*i + xstep*j, ystep*j);
-            ctx.stroke(p);
-            ctx.fillStyle = colours[col];
-            col = (col + 1) % colours.length;
-            ctx.fill(p);
-            ctx.restore();
-        }
-    }
+function tessellateToMain() {
+    tessellate(canvas, 4);
     // make the image draggable
     document.getElementById('sketchArea').innerHTML =
         ['<img id="output" class="droppedImage" src="',
          canvas.toDataURL(),
          '" title="tessellated"/>'].join('');
+}
+
+function tessellateToSave() {
+    let canv = document.createElement('canvas');
+    canv.width = 3840;
+    canv.height = 2160;
+    tessellate(canv, 2);
+    let link = document.createElement('a');
+    link.download = 'tessellation.png';
+    link.href = canv.toDataURL();
+    link.click();
+}
+
+// calculates the index intervals in order to make a double loop that covers
+// the canvas with that path, given that the path is offset by xgap every time
+// we go down one cell
+function calculateLoopIntervals(can, pathWidth, pathHeight, xgap) {
+    let jmax = Math.ceil(can.height / pathHeight);
+    let offsetAtBottom = xgap * jmax;
+    let iExtra = Math.ceil(offsetAtBottom / pathWidth);
+    let imin = Math.min(-2, -iExtra);
+    let imaxBase = Math.ceil(can.width / pathWidth);
+    let imax = Math.max(imaxBase, imaxBase - iExtra);
+    return {imin: imin, imax: imax, jmin: -1, jmax: jmax};
+}
+
+// tessellate given canvas with hPath using given reduction 
+function tessellate(canv, reduction) {
+    let context = canv.getContext('2d');
+    context.clearRect(0, 0, canv.width, canv.height);
+    let p = new Path2D();
+    let m = new DOMMatrix();
+    m.scaleSelf(1/reduction, 1/reduction);
+    p.addPath(hPath, m);
+    let xstep = (xgap)/(reduction);
+    let ystep = (box.h)/(reduction);
+    let x=0, y=0;
+    let col = 0;
+    bounds = calculateLoopIntervals(canv,
+                                    box.w / reduction,
+                                    box.h / reduction,
+                                    xgap / reduction);
+    for(i=bounds.imin; i < bounds.imax; i++) {
+        for(j=bounds.jmin; j < bounds.jmax; j++) {
+            context.save();
+            context.translate(box.w/reduction*i + xstep*j, ystep*j);
+            context.stroke(p);
+            context.fillStyle = colours[col];
+            col = (col + 1) % colours.length;
+            context.fill(p);
+            context.restore();
+        }
+    }
 }
 
 function resetCanvas() {
@@ -259,16 +297,16 @@ function transToStep3() {
     tPoints.push(leftCut);
     let tPath = pointsToPath(tPoints);
     // also store everything in one path for convenience
-    xgap = vPoints[0].x - vPoints[vPoints.length-1].x;
+    xgap = vPoints[vPoints.length-1].x - vPoints[0].x;
 
     tesselxoffset = hPoints[0].x - hPoints[hPoints.length-1].x;
     tesselyoffset = hPoints[0].y - hPoints[hPoints.length-1].y;
 
     hPath = new Path2D();
     let mb = new DOMMatrix();
-    mb.translateSelf(xgap/2, -box.h/2);
+    mb.translateSelf(-xgap/2, -box.h/2);
     let mt = new DOMMatrix();
-    mt.translateSelf(-xgap/2, box.h/2);
+    mt.translateSelf(xgap/2, box.h/2);
     hPath.addPath(bPath, mb);
     hPath.addPath(tPath, mt);
     // now we animate the transition
@@ -277,7 +315,7 @@ function transToStep3() {
     let xoffsets=[], yoffsets=[];
     var frames = 0;
     for(x=1; x <= nframes; x++) {
-        xoffsets.push(Math.round((xgap/2) * Math.sin(x*(Math.PI/2) / nframes)));
+        xoffsets.push(Math.round((-xgap/2) *Math.sin(x*(Math.PI/2) / nframes)));
         yoffsets.push(Math.round((box.h/2) *Math.sin(x*(Math.PI/2) / nframes)));
     }
     ctx.fillStyle = boxFill;
