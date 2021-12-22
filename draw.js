@@ -506,6 +506,7 @@ function sketchHorizontal(bCoords, eq) {
         if (cutp !== undefined) {
             let realp = {x: cutp.point.x - box.w/2, y: cutp.point.y};
             vPointLeftCutIndex = cutp.index;
+            hPoints = [];
             hPoints.push(realp);
             state = states.CUTTING;
             leftCut = realp;
