@@ -104,6 +104,7 @@ function init() {
         document.querySelector('#save').disabled = true;
     } else if (currentStep == 2) {
         hPath = [];
+        hPoints = [];
         instr2.style.color = 'blue';
         instr1.style.color = '#cccccc';
         // draw current shape here
@@ -506,7 +507,6 @@ function sketchHorizontal(bCoords, eq) {
         if (cutp !== undefined) {
             let realp = {x: cutp.point.x - box.w/2, y: cutp.point.y};
             vPointLeftCutIndex = cutp.index;
-            hPoints = [];
             hPoints.push(realp);
             state = states.CUTTING;
             leftCut = realp;
