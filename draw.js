@@ -152,11 +152,11 @@ function tessellateToSave() {
 // the canvas with that path, given that the path is offset by xgap every time
 // we go down one cell
 function calculateLoopIntervals(can, pathWidth, pathHeight, xgap) {
-    let jmax = 1 + Math.ceil(can.height / pathHeight);
+    let jmax = Math.ceil(can.height / pathHeight);
     let offsetAtBottom = xgap * jmax;
     let iExtra = Math.ceil(offsetAtBottom / pathWidth);
     let imin = Math.min(-2, -iExtra);
-    let imaxBase = Math.ceil(can.width / pathWidth);
+    let imaxBase = 1 + Math.ceil(can.width / pathWidth);
     let imax = Math.max(imaxBase, imaxBase - iExtra);
     return {imin: imin, imax: imax, jmin: -1, jmax: jmax};
 }
