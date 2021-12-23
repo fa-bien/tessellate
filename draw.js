@@ -42,7 +42,8 @@ function genRandomColours(procedure) {
     if (procedure == 'random') {
         ncol = 3 + Math.floor(Math.random() * 4);
         for (k=0; k <ncol ; k++) {
-            colours.push('#' + Math.floor(Math.random()*16777215).toString(16));
+            colours.push('#' +
+              Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'));
         }
     } else if (procedure == 'smart-random') {
         colours = genSmartColours(2 + Math.floor(Math.random() * 6));
@@ -151,7 +152,7 @@ function tessellateToSave() {
 // the canvas with that path, given that the path is offset by xgap every time
 // we go down one cell
 function calculateLoopIntervals(can, pathWidth, pathHeight, xgap) {
-    let jmax = Math.ceil(can.height / pathHeight);
+    let jmax = 1 + Math.ceil(can.height / pathHeight);
     let offsetAtBottom = xgap * jmax;
     let iExtra = Math.ceil(offsetAtBottom / pathWidth);
     let imin = Math.min(-2, -iExtra);
