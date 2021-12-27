@@ -28,15 +28,14 @@ function HSVColour(H, S, V) {
     }
 }
 
-const silverRatio = 2.0 / (1 + Math.sqrt(5))
-
 function genSmartColours(n) {
     let colours = [];
     let H = Math.random();
     let S = 0.4 + 0.6* Math.random();
     let V = 0.9 + 0.1 * Math.random();
+    let step = 1 / n;
     for (i=0; i < n; i++) {
-        let c = new HSVColour((H + silverRatio * i) % 1, S, V);
+        let c = new HSVColour((H + step * i) % 1, S, V);
         colours.push(c.RGB());
     }
     return colours;
