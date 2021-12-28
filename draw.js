@@ -155,7 +155,7 @@ function calculateLoopIntervals(can, pathWidth, pathHeight, xgap) {
     let jmax = Math.ceil(can.height / pathHeight);
     let offsetAtBottom = xgap * jmax;
     let iExtra = Math.ceil(offsetAtBottom / pathWidth);
-    let imin = Math.min(-2, -iExtra);
+    let imin = Math.min(-3, -iExtra);
     let imaxBase = 1 + Math.ceil(can.width / pathWidth);
     let imax = Math.max(imaxBase, imaxBase - iExtra);
     return {imin: imin, imax: imax, jmin: -1, jmax: jmax};
@@ -185,6 +185,7 @@ function tessellate(canv, reduction) {
             context.fillStyle = colours[col];
             col = (col + 1) % colours.length;
             context.fill(p);
+            // context.strokeText(i + ", " + j, box.w/reduction, box.h/reduction);
             context.restore();
         }
     }
@@ -300,6 +301,7 @@ function transToStep3() {
     let tPath = pointsToPath(tPoints);
     // also store everything in one path for convenience
     xgap = vPoints[vPoints.length-1].x - vPoints[0].x;
+    ygap = hPoints[hPoints.length-1].y - hPoints[0].y;
 
     tesselxoffset = hPoints[0].x - hPoints[hPoints.length-1].x;
     tesselyoffset = hPoints[0].y - hPoints[hPoints.length-1].y;
